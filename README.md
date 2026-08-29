@@ -2,10 +2,7 @@
 
 Spectrum sensing and frame-error prediction, on real DARPA SC2 Colosseum
 measurements.
-
-Repo 3 of six in a DARPA Spectrum Collaboration Challenge project. Where
-[Mod-Scope](https://github.com/jawadhasuna/Mod-Scope) asks *what signal is
-this*, Frame-Oracle asks the two questions a radio actually needs answered:
+asks *what signal is this*, Frame-Oracle asks the two questions a radio actually needs answered:
 **is this channel free**, and **will my transmission survive**.
 
 > Status: Part A (sensing) and Part B (frame-error prediction) complete.
