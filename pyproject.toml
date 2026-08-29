@@ -1,0 +1,27 @@
+[project]
+name = "frame-oracle"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "imbalanced-learn>=0.14.2",
+    "matplotlib>=3.11.1",
+    "numpy>=2.5.2",
+    "pandas>=3.0.5",
+    "scikit-learn>=1.9.0",
+    "scipy>=1.18.1",
+    "torch>=2.13.0",
+]
+
+# PyPI's Windows torch wheel is CPU-only; the CUDA builds live on PyTorch's
+# own index. Same pinning as Mod-Scope. torch is needed here for two reasons:
+# the SC2 pickles contain PyTorch tensors and cannot be unpickled without it,
+# and Part B trains a frame-error predictor.
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130" }]
