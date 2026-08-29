@@ -210,7 +210,7 @@ def run(scenario, links, args, device):
     print(f"  {'specificity (error)':<20} {m['specificity'] * 100:>7.2f}%")
     print(f"  {'F1':<20} {m['f1']:>8.4f}")
 
-    return m, (yte, prob, ids_te)
+    return m, (yte, prob, ids_te), model
 
 
 def main():
@@ -229,7 +229,21 @@ def main():
 
     results, curves = {}, {}
     for scenario in ("by_link", "by_frame"):
-        results[scenario], curves[scenario] = run(scenario, links, args, device)
+        results[scenario], curves[scenario], model = run(
+            scenario, links, args, device)
+
+        # Save each scenario's model. by_link is the one worth deploying --
+        # it is the only one evaluated on links it has never seen, so it is
+        # the only one whose score predicts behaviour on a new link.
+        Path("checkpoints").mkdir(exist_ok=True)
+        torch.save(
+            {"state_dict": model.state_dict(),
+             "args": vars(args),
+             "scenario": scenario,
+             "n_features": len(FEATURE_NAMES),
+             "feature_names": FEATURE_NAMES,
+             "metrics": results[scenario]},
+            Path("checkpoints") / f"{args.which}_{scenario}.pt")
 
     # --- the comparison that matters -----------------------------------------
     bl, bf = results["by_link"], results["by_frame"]
@@ -247,6 +261,9 @@ def main():
     print("by_link is the deployment question -- an unseen link, no history.")
     print("Quoting the higher number without saying which split produced it")
     print("is the most common way these results get overstated.")
+
+    print("")
+    print("saved checkpoints for both scenarios")
 
     Path("results").mkdir(exist_ok=True)
     with open(Path("results") / f"{args.which}_frame_error.json", "w") as f:

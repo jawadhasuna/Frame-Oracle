@@ -109,6 +109,49 @@ before transmitting. That is the operationally useful figure -- a radio that
 expects a failure can drop MCS or change channel instead of spending the
 airtime.
 
+### It replicates across scrimmages
+
+Scrimmage 5 is a different competition round -- different teams, different
+scenarios, different interference -- with 627 links against Scrimmage 4's 284.
+
+```
+                        Scrimmage 4    Scrimmage 5
+by_link  AUC                 0.7077         0.6838
+by_frame AUC                 0.7936         0.7820
+scenario gap                +0.0859        +0.0982
+
+by_link  specificity          67.86%         69.39%
+by_frame specificity          77.13%         75.44%
+```
+
+The scenario gap comes out at +0.09 and +0.10 on independent data, and the
+by_link ceiling holds at 0.68-0.71 in both. That ceiling is a property of the
+problem, not of one link set.
+
+### More data does not help, and more training hurts
+
+Scrimmage 5 has 2.3x the frames of Scrimmage 4. Its by_link AUC is LOWER
+(0.684 vs 0.708). The training trace shows why:
+
+```
+by_link    epoch  0   val AUC 0.7049   <- best
+           epoch 39   val AUC 0.6840
+```
+
+Validation AUC peaked on the FIRST epoch and declined for the next 39, while
+by_frame on the same data climbed steadily to 0.784. Everything learned after
+epoch 0 was link-specific and did not transfer.
+
+This is an information ceiling, not an optimisation problem. Twenty features
+describing a link never previously observed contain a bounded amount of
+evidence about whether the next frame survives, and no amount of extra data or
+capacity adds more.
+
+Consequence for the rest of the project: when this predictor becomes
+Node-Parley's channel model, agents facing an unseen link are working with
+AUC ~0.69 information, not 0.78. Building the environment on the optimistic
+number would flatter the agents.
+
 ### Why the accuracy row is a trap
 
 `accuracy @ tuned` is 74.35% and 74.47% -- apparently identical, apparently

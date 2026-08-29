@@ -1,0 +1,42 @@
+{
+  "task": "frame error prediction",
+  "scenario": "by_link",
+  "features": [
+    "snr",
+    "mcs",
+    "center_freq",
+    "bandwidth",
+    "psd_0",
+    "psd_1",
+    "psd_2",
+    "psd_3",
+    "psd_4",
+    "psd_5",
+    "psd_6",
+    "psd_7",
+    "psd_8",
+    "psd_9",
+    "psd_10",
+    "psd_11",
+    "psd_12",
+    "psd_13",
+    "psd_14",
+    "psd_15"
+  ],
+  "input_name": "features",
+  "output_name": "logit",
+  "output_note": "raw logit; apply sigmoid for P(frame received)",
+  "decision_threshold": 0.21982862055301666,
+  "threshold_note": "chosen on validation to maximise accuracy; lower it to catch more failures at the cost of false alarms",
+  "preprocessing": "features are standardised (zero mean, unit variance) using statistics from the SC2 dataset; the page must supply values on that same scale",
+  "test_metrics": {
+    "auc": 0.6838323948084077,
+    "balanced_accuracy": 0.6158715496880052,
+    "specificity": 0.6938688757958006,
+    "recall": 0.5378742235802098,
+    "accuracy_tuned": 0.7615894736842105,
+    "baseline_accuracy": 0.7338
+  },
+  "honest_note": "AUC ~0.69-0.71 on unseen links across two scrimmages. This is an information ceiling, not a tuning failure: more data and more training both made it worse.",
+  "size_kb": 3
+}
